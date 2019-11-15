@@ -1,4 +1,4 @@
------  access_all by zj  -----
+--- @author zhouwl@missfresh.net ---
 local optl = require("optl")
 local ngx_var = ngx.var
 local ngx_ctx = ngx.ctx
@@ -408,9 +408,9 @@ if config_is_on("app_Mod") and action_tag == "" then
     end
 end
 
--- --- STEP 6
--- -- referer过滤模块
---  动作支持（allow deny log）
+----- STEP 6
+---- referer过滤模块
+---  动作支持（allow deny log）
 if config_is_on("referer_Mod") and action_tag == "" then
     local ref_mod = getDict_Config("referer_Mod")
     for i, v in ipairs(ref_mod) do
