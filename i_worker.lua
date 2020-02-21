@@ -23,8 +23,8 @@ local config_base
 
 -- dict 清空过期内存
 local function flush_expired_dict()
-    local dict_list = {"token_dict","count_dict","config_dict","host_dict","ip_dict","limit_ip_dict"}
-    for _,v in ipairs(dict_list) do
+    local dict_list = { "token_dict", "count_dict", "config_dict", "host_dict", "ip_dict", "limit_ip_dict" }
+    for _, v in ipairs(dict_list) do
         ngx_shared[v]:flush_expired()
     end
 end
@@ -47,7 +47,7 @@ local function pull_redisConfig()
     httpc:connect("127.0.0.1", 5460)
 
     -- And request using a path, rather than a full URI.
-    local res, err = httpc:request{
+    local res, err = httpc:request {
         path = "/api/dict_redis?action=pull&key=all_dict",
         headers = {
             ["Host"] = "127.0.0.1:5460",
@@ -70,7 +70,7 @@ local function push_Master()
     httpc:set_timeout(500)
     httpc:connect("127.0.0.1", 5460)
 
-    local res, err = httpc:request{
+    local res, err = httpc:request {
         path = "/api/dict_redis?action=push&key=all_dict&slave=yes",
         headers = {
             ["Host"] = "127.0.0.1:5460",
@@ -95,7 +95,7 @@ local function push_count_dict()
 
     -- And request using a path, rather than a full URI.
     -- 目前是调试阶段 denug=yes ,否则就是 no
-    local res, err = httpc:request{
+    local res, err = httpc:request {
         path = "/api/dict_redis?action=push&key=count_dict",
         headers = {
             ["Host"] = "127.0.0.1:5460",
@@ -121,8 +121,8 @@ local function save_configFile(_debug)
 
     -- And request using a path, rather than a full URI.
     -- 调试阶段debug=yes 否则应该是 no
-    local res, err = httpc:request{
-        path = "/api/config?action=save&mod=all_Mod&debug=".._debug,
+    local res, err = httpc:request {
+        path = "/api/config?action=save&mod=all_Mod&debug=" .. _debug,
         headers = {
             ["Host"] = "127.0.0.1:5460",
         },
@@ -136,7 +136,7 @@ local function save_configFile(_debug)
     end
 end
 
-handler_zero = function ()
+handler_zero = function()
     -- do something
 
     local config = cjson_safe.decode(config_dict:get("config")) or {}
@@ -169,13 +169,13 @@ handler_zero = function ()
     end
 end
 
-handler_all = function ()
+handler_all = function()
     local optl = require("optl")
     local dict_config_version = config_dict:get("config_version")
     local optl_config_version = optl.config_version
     if dict_config_version ~= optl_config_version then
         local config = cjson_safe.decode(config_dict:get("config"))
-        if config and not stool.table_compare(config,optl.config) then
+        if config and not stool.table_compare(config, optl.config) then
             -- 后续 对 整个规则进行 合法性判断
             optl.config = config
         end
@@ -187,7 +187,7 @@ handler = function()
     if _worker_id == 0 then
         handler_zero()
     end
-    timer_every(1,handler_all)
+    timer_every(1, handler_all)
 end
 
 local ok, err = timer_at(0, handler)
